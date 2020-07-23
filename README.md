@@ -30,6 +30,7 @@ Moodle is deployed to dokku using "Dockerfile deployment". As usual, we push thi
 
 Create app
  	dokku apps:create oxido
+    dokku domains:add oxido oxido.gpem.cl
 
 Create database
 	dokku mysql:create db_oxido
@@ -39,13 +40,25 @@ Link Database
 
 Configure environment variables and options on server, replacing ... with appropriate values
 ```
-dokku config:set oxido \
+dokku config:set --no-restart oxido \
     DATABASE_URL=mysql://xxxxxx \
-    MOODLE_URL=http://oxido.gpem.cl
+    MOODLE_URL=https://oxido.gpem.cl \
+    DOKKU_LETSENCRYPT_EMAIL=racm@live.cl
 dokku docker-options:add oxido build,run,deploy "-v /var/log/moodle/apache2:/var/log/apache2"
 dokku docker-options:add oxido build,run,deploy "-v /var/moodle/:/var/moodledata"
 dokku proxy:ports-add oxido http:80:80
 ```
+
+# Map ports
+dokku ps:stop oxido
+dokku config:set --no-restart oxido DOKKU_PROXY_PORT_MAP="http:80:80"
+# Add SSL
+dokku letsencrypt oxido
+
+# Check if ports are mapped correctly
+dokku config:get oxido DOKKU_PROXY_PORT_MAP
+
+# Should output: "http:80:9000 https:443:9000"
 
 If the base image has been updated, ensure the latest image is on the host
 
