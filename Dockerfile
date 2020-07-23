@@ -1,17 +1,14 @@
-FROM code4sa/moodle-base:latest
-
-MAINTAINER Code For South Africa <info@code4sa.org>
-
+FROM gpem/moodle-base:latest
+LABEL maintainer="racm@live.cl"
 VOLUME ["/var/moodledata"]
-EXPOSE 80
+EXPOSE 80 443
 COPY moodle-config.php /var/www/html/config.php
-RUN echo newrelic-php5 newrelic-php5/application-name string "Code4SA Learn Moodle" | \
-    debconf-set-selections
-ARG NEWRELIC_KEY=
-RUN echo newrelic-php5 newrelic-php5/license-key string $NEWRELIC_KEY | \
-    debconf-set-selections
-
+# Set ENV Variables externally Moodle_URL should be overridden.
+ENV MOODLE_URL http://127.0.0.1
 RUN mkdir /app
 COPY CHECKS /app/CHECKS
-
+# Enable SSL, moodle requires it
+RUN a2enmod ssl && a2ensite default-ssl  #if using proxy dont need actually secure connection
+# Cleanup, this is ran to reduce the resulting size of the image.
+RUN apt-get clean autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/lib/dpkg/* /var/lib/cache/* /var/lib/log/*
 CMD ["/etc/apache2/foreground.sh"]
