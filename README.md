@@ -37,27 +37,23 @@ Create database
 Link Database
 	dokku mysql:link db_oxido oxido
 
-Add remote to your local repo
-
-    git remote add dokku dokku@gpem.cl:oxido
-
 Configure environment variables and options on server, replacing ... with appropriate values
-
 ```
-dokku config:set moodle \
-      DB_HOST=dokku-mysql-oxido \
-      DB_NAME=moodle \
-      DB_USER=moodle \
-      DB_PASSWORD=... \
-      MOODLE_URL=https://oxido.gpem.cl
-dokku docker-options:add moodle build,run,deploy "-v /var/log/moodle/apache2:/var/log/apache2"
-dokku docker-options:add moodle build,run,deploy "-v /var/moodle/:/var/moodledata"
-dokku proxy:ports-add moodle http:80:80
+dokku config:set oxido \
+    DATABASE_URL=mysql://xxxxxx \
+    MOODLE_URL=http://oxido.gpem.cl
+dokku docker-options:add oxido build,run,deploy "-v /var/log/moodle/apache2:/var/log/apache2"
+dokku docker-options:add oxido build,run,deploy "-v /var/moodle/:/var/moodledata"
+dokku proxy:ports-add oxido http:80:80
 ```
 
 If the base image has been updated, ensure the latest image is on the host
 
-    ubuntu@dokku6:~$ docker pull gpem/moodle-base:latest
+    ubuntu@dokku:~$ docker pull dokku/moodle-base:latest
+
+Add remote to your local repo
+
+    git remote add dokku dokku@gpem.cl:oxido
 
 Push any config/dockerfile updates to dokku. Dokku will build an image based on Dockerfile.
     
