@@ -28,7 +28,7 @@ $CFG->dboptions = array (
   'dbpersist' => 0,
   'dbport' => getenv('DATABASE_PORT') ?: 3306,
   'dbsocket' => '',
-  'dbcollation' => 'utf8_general_ci',
+  'dbcollation' => 'utf8mb4',
 );
 
 $CFG->wwwroot   = getenv('MOODLE_URL') ?: 'http://localhost';
