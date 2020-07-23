@@ -30,7 +30,7 @@ $CFG->dboptions = array (
   'dbsocket' => '',
   'dbcollation' => 'utf8mb4_unicode_ci',
 );
-
+$CFG->sslproxy  = 1;
 $CFG->wwwroot   = getenv('MOODLE_URL') ?: 'http://localhost';
 $CFG->dataroot  = '/var/moodledata';
 $CFG->admin     = 'admin';
