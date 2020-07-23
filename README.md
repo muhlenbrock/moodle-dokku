@@ -26,7 +26,16 @@ Visit it at http://localhost/
 
 ## Deploy to production
 
-Moodle is deployed to dokku using "Dockerfile deployment". As usual, we push this repository to dokku. Dokku will see the Dockerfile and build it to create the app image and start the container as usual. This Dockerfile depends on a base image code4sa/moodle-base which we usually [build on Docker Hub](https://hub.docker.com/r/code4sa/moodle-base/~/settings/automated-builds/).
+Moodle is deployed to dokku using "Dockerfile deployment". As usual, we push this repository to dokku. Dokku will see the Dockerfile and build it to create the app image and start the container as usual.
+
+Create app
+ 	dokku apps:create oxido
+
+Create database
+	dokku mysql:create db_oxido
+
+Link Database
+	dokku mysql:link db_oxido oxido
 
 Add remote to your local repo
 
