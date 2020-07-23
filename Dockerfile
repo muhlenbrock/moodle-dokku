@@ -1,4 +1,4 @@
-FROM gpem/moodle-base:latest
+FROM dokku/moodle-base:latest
 LABEL maintainer="racm@live.cl"
 VOLUME ["/var/moodledata"]
 EXPOSE 80 443
