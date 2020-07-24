@@ -1,77 +1,75 @@
-## Building base image
+## Local enviroment
+### Building base image
 
-This image is usually built by docker hub and pulled by the dokku host. You don't usually need to build it yourself.
+You need to build it yourself.
 
 ```shell
-docker build -t gpem/moodle-base:latest .
+$ docker build -t dokku/moodle-base:latest .
 ```
 
-## Building app image for local testing
+### Building app image for local testing
 
 ```shell
-docker build -t gpem/moodle-dokku:latest .
+$ docker build -t dokku/moodle:latest .
 ```
 
-## Run locally
+### Run locally
 
 ```shell
-docker run -d -P --name moodle -e MOODLE_URL=http://localhost:8080 -p 8080:80 gpem/moodle-dokku:latest
+$ docker run -d -P --name moodle -e MOODLE_URL=http://localhost:8080 -p 8080:80 dokku/moodle:latest
 ```
 
 ### Restart a previously-run container
 
-docker start -i moodle
+```shell
+$ docker start -i moodle
+```
+Visit it at http://localhost:8080
 
-Visit it at http://localhost/
-
-## Deploy to production
+## Production enviroment
+### Dokku deploy
 
 Moodle is deployed to dokku using "Dockerfile deployment". As usual, we push this repository to dokku. Dokku will see the Dockerfile and build it to create the app image and start the container as usual.
 
-Create app
- 	dokku apps:create oxido
-    dokku domains:add oxido oxido.gpem.cl
-
-Create database
-	dokku mysql:create db_oxido
-
-Link Database
-	dokku mysql:link db_oxido oxido
-
-Configure environment variables and options on server, replacing ... with appropriate values
-```
-dokku config:set --no-restart oxido \
-    DATABASE_URL=mysql://xxxxxx \
-    MOODLE_URL=https://oxido.gpem.cl \
-    DOKKU_LETSENCRYPT_EMAIL=racm@live.cl
-dokku docker-options:add oxido build,run,deploy "-v /var/log/moodle/apache2:/var/log/apache2"
-dokku docker-options:add oxido build,run,deploy "-v /var/moodle/:/var/moodledata"
-dokku proxy:ports-add oxido http:80:80
+### Ensure the latest image is on the host
+```shell
+$ docker build -t dokku/moodle-base:latest .
 ```
 
-# Map ports
-dokku ps:stop oxido
-dokku config:set --no-restart oxido DOKKU_PROXY_PORT_MAP="http:80:80"
-# Add SSL
-dokku letsencrypt oxido
-
-# Check if ports are mapped correctly
-dokku config:get oxido DOKKU_PROXY_PORT_MAP
-
-# Should output: "http:80:9000 https:443:9000"
-
-If the base image has been updated, ensure the latest image is on the host
-
-    ubuntu@dokku:~$ docker pull dokku/moodle-base:latest
-
-Add remote to your local repo
-
-    git remote add dokku dokku@gpem.cl:oxido
-
-Push any config/dockerfile updates to dokku. Dokku will build an image based on Dockerfile.
-    
-    git push dokku master
-
-## Configure Cron
-
-*/1 * * * * dokku --rm run  moodle /usr/bin/php /var/www/html/admin/cli/cron.php > /dev/null
+### 1 Create the app
+```shell
+$ dokku apps:create oxido
+```
+### 2 Create a mysql service
+```shell
+$ dokku mysql:create db_oxido
+```
+### 3 Link the mysql service to the app
+```shell
+$ dokku mysql:link db_oxido oxido
+```
+### 4 Configure environment variables and options on server.
+```shell
+$ dokku config:set --no-restart oxido \
+    MOODLE_URL=https://oxido.gpem.cl
+$ dokku docker-options:add oxido build,run,deploy "-v /var/log/moodle/apache2:/var/log/apache2"
+$ dokku docker-options:add oxido build,run,deploy "-v /var/moodle/:/var/moodledata"
+```
+If your app uses a non-standard port (perhaps you have a dockerfile deploy exposing port 99999)
+```shell
+$ dokku proxy:ports-add oxido http:80:80
+```
+### 5 Add remote to your local repo & Push any config/dockerfile updates to dokku
+```shell
+$ git remote add dokku dokku@gpem.cl:oxido
+$ git push dokku master
+```
+### Add SSL
+```shell
+$ dokku letsencrypt oxido
+```
+### Check if ports are mapped correctly
+```shell
+$ dokku config:get oxido DOKKU_PROXY_PORT_MAP
+```
+Should output: "http:80:9000 https:443:9000"

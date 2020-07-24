@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t gpem/moodle-dokku:latest .
+docker build -t dokku/moodle:latest .
