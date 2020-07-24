@@ -3,6 +3,9 @@ LABEL maintainer="racm@live.cl"
 VOLUME ["/var/moodledata"]
 EXPOSE 80 443
 COPY moodle-config.php /var/www/html/config.php
+#cron
+COPY moodlecron /etc/cron.d/moodlecron
+RUN chmod 0644 /etc/cron.d/moodlecron
 # Set ENV Variables externally Moodle_URL should be overridden.
 ENV MOODLE_URL http://127.0.0.1
 # Cleanup, this is ran to reduce the resulting size of the image.
