@@ -17,7 +17,7 @@ dokku mysql:link db_$name $name
 
 # 4 Configure environment variables and options on server.
 echo "4 Configure environment variables and options on server."
-dokku config:set --no-restart $name MOODLE_URL=https://$name.gpem.cl
+dokku config:set $name MOODLE_URL=https://$name.gpem.cl
 dokku docker-options:add $name build,run,deploy "-v /var/log/moodle/apache2:/var/log/apache2"
 dokku docker-options:add $name build,run,deploy "-v /var/moodle/:/var/moodledata"
 
@@ -31,7 +31,8 @@ git remote add $name dokku@gpem.cl:$name
 git push $name master
 
 # 6 Add SSL
-#dokku letsencrypt $name
+echo "6 Add SSL"
+dokku letsencrypt $name
 
 echo "Configuración app"
 dokku config $name
