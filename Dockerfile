@@ -10,5 +10,5 @@ RUN chmod 0644 /etc/cron.d/moodlecron
 ENV MOODLE_URL http://127.0.0.1
 # Cleanup, this is ran to reduce the resulting size of the image.
 RUN apt-get clean autoclean && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/lib/dpkg/* /var/lib/cache/* /var/lib/log/*
-RUN /usr/bin/php /var/www/html/admin/cli/install.php
+#RUN echo "install de moodle" /usr/bin/php /var/www/html/admin/cli/install.php
 CMD ["/etc/apache2/foreground.sh"]
